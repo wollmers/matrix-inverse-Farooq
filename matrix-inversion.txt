@@ -1,0 +1,81 @@
+1. http://www.irma-international.org/viewtitle/41011/
+
+2. https://www.academia.edu/14385687/An_Efficient_and_Generic_Algorithm_for_Matrix_Inversion
+
+https://stackoverflow.com/questions/57666611/bad-matrix-inversion-algorithm-or-implemented-incorrectly
+
+
+1.
+A ... square matrix
+a ... element 
+n ... dimension
+
+A = [a [i, j]]
+
+The algorithm assumes to take a square matrix A = [a [i, j]], of dimension n. The inverse is
+calculated in n iterations.
+
+In each iteration p,
+all the existing elements a[i, j], of A change to
+new values a_new[i, j],.
+
+After the last iteration i.e.
+when p[n] = , a_new[i,j], will be the elements of the
+inverse.
+
+d ... determinant of the matrix
+
+ The determinant of the matrix (denoted
+by d) is also calculated iteratively through
+successive multiplication of the pivot selected
+in each iteration. 
+
+In this algorithm the pivots
+are selected diagonally starting from a[1, 1],
+to a[n, n], .
+
+If any pivot is found to be zero i.e.,
+a[p, p] = 0, then inverse cannot be calculated. 
+
+If
+an inverse is calculated then d will contain the
+determinant of A.
+
+A simple improvement to the algorithm is
+to go to the next diagonal element (in case of
+zero pivot) and revisit the zero diagonal element
+later. Probably by that time it would become
+non zero. Note that in step 7 of the following
+algorithm a_new[i, p],
+' on the LHS means that the latest value of the pivot row is to be used in the
+calculations.
+
+Step 1: Let p = 0, d = 1;
+Step 2: p <= p +1
+Step 3: If a[p, p] == 0 then cannot calculate inverse, go to step 10.
+Step 4: d <= d x a[p, p]
+Step 5: Calculate the new elements of the pivot row by:
+        
+  a_new[p,j] <= a[p,j] / a[p,p] where  j = 1 .. n, j != p
+  
+Step 6: Calculate the new elements of the pivot column by:
+        
+  a_new[i,p] <= a[i,p] / a[p,p] where  i = 1 .. n, i != p
+  
+Step 7: Calculate the rest of the new elements by:
+
+  a_new[i,j] <= a[i,j] + a[p,j] x a_new[i,p] where i = 1 .. n, j = 1 .. n, & i,j != p
+  
+  
+Step 8: Calculate the new value of the current pivot location:
+
+  a_new[p,p] <= 1 / a_new[p,p]
+  
+Step 9: If p < n go to step 2 (n the dimension of the matrix A).
+
+Step 10: Stop. If inverse exists, A contains the inverse and d is the determinant.  
+  
+  
+  
+  
+  
