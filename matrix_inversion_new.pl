@@ -11,7 +11,7 @@ use Test::More;
 
 
 
-my $VERBOSE = 0;
+my $VERBOSE = 1;
 
 # invert matrix
 # An Efficient and Simple Algorithm for Matrix Inversion
@@ -227,8 +227,7 @@ sub invert_corr_debugging($)
     return ($A->[$p]->[$p] != 0.0);
 }
 
-sub invert_corr($)
-{
+sub invert_corr($) {
     my $A = shift;          # matrix is an array of rows
     my $n = scalar(@$A);
 
@@ -290,6 +289,7 @@ sub invert_corr($)
 
 
 # by Håkon Hægland
+# https://stackoverflow.com/questions/57666611/bad-matrix-inversion-algorithm-or-implemented-incorrectly
 sub invert_hakon($)
 {
     my $m = shift;          # matrix is an array of rows
@@ -430,7 +430,7 @@ my $examples = {
 
 };
 
-if (0) {
+if (1) {
 # sanity of test examples
 for my $example (sort keys %$examples) {
    my $A    = $examples->{$example}->{'A'};
@@ -480,16 +480,18 @@ for my $example (sort keys %$examples) {
    my $Ainv = matclone($examples->{$example}->{'Ainv'});
    my $I    = matclone($examples->{$example}->{'I'});
 
-   print '*** invert_corr '.$example,"\n" if $VERBOSE;
+   print '*** invert_corr '.$example,"\n" if $VERBOSE > 1;
+
+   pm($A,'invert_corr '.$example.' input $A') if $VERBOSE;
 
    my ($p_ele_ok, $det, $C) = invert_corr($A);
 
-   print '$C: ',pm($C,'invert_corr det '.$example) if $VERBOSE;
+   pm($C,'invert_corr '.$example.' result $C') if $VERBOSE;
 
    is_deeply $C, $Ainv, $example.' invert_corr Ainv '
         or diag pm($C,"got: "), pm($Ainv,"expected: ");
 
-   is $det, $examples->{$example}->{'det'}, $example.' invert_corr '.' $det: '.$det;
+   is $det, $examples->{$example}->{'det'}, $example.' invert_corr'.' det: '.$det;
 }
 }
 
@@ -505,16 +507,18 @@ for my $example (sort keys %$examples) {
    my $Ainv = matclone($examples->{$example}->{'Ainv'});
    my $I    = matclone($examples->{$example}->{'I'});
 
-   print '*** invert_hakon '.$example,"\n" if $VERBOSE;
+   print '*** invert_hakon '.$example,"\n" if $VERBOSE > 1;
+
+   pm($A,'invert_hakon '.$example.' input $A') if $VERBOSE;
 
    my ($p_ele_ok, $det, $C) = invert_hakon($A);
 
-   print '$C: ',pm($C,'invert_hakon det '.$example) if $VERBOSE;
+   pm($C,'invert_hakon '.$example.' result $C') if $VERBOSE;
 
    is_deeply $C, $Ainv, $example.' invert_hakon Ainv'
         or diag pm($C,"got: "), pm($Ainv,"expected: ");
 
-   is $det, $examples->{$example}->{'det'}, $example.' invert_hakon '.' det: '.$det;
+   is $det, $examples->{$example}->{'det'}, $example.' invert_hakon'.' det: '.$det;
 }
 }
 
@@ -525,11 +529,15 @@ for my $example (sort keys %$examples) {
    my $Ainv = matclone($examples->{$example}->{'Ainv'});
    my $I    = matclone($examples->{$example}->{'I'});
 
+   print '*** Math::Matrix->invert '.$example,"\n" if $VERBOSE > 1;
 
+   pm($A,'Math::Matrix->invert '.$example.' input $A') if $VERBOSE;
 
    my $A_obj = Math::Matrix->new(@$A);
 
    my $C    = [@{$A_obj->invert}]; # $A_obj->invert returns a blessed object
+
+   pm($C,'Math::Matrix->invert '.$example.' result $C') if $VERBOSE;
 
    is_deeply $C, $Ainv, $example.' Math::Matrix->invert Ainv'
         or diag pm($C,"got: "), pm($Ainv,"expected: ");
